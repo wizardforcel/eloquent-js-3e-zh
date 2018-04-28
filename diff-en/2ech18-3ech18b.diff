@@ -1,0 +1,619 @@
+diff --git a/2ech18.md b/3ech18b.md
+index 83a169e..a26468a 100644
+--- a/2ech18.md
++++ b/3ech18b.md
+@@ -1,19 +1,10 @@
+-# Chapter 18Forms and Form Fields
++## Form fields
+ 
+-> I shall this very day, at Doctor's feast,
+-> My bounden service duly pay thee.
+-> But one thing!—For insurance' sake, I pray thee,
+-> Grant me a line or two, at least.
+-> 
+-> &lt;footer&gt;Mephistopheles, &lt;cite&gt;in Goethe's Faust&lt;/cite&gt;&lt;/footer&gt;
++Forms were originally designed for the pre-JavaScript Web, to allow web sites to send user-submitted information in an HTTP request. This design assumes that interaction with the server always happens by navigating to a new page.
+ 
+-Forms were introduced briefly in the [previous chapter](17_http.html#http_forms) as a way to _submit_ information provided by the user over HTTP. They were designed for a pre-JavaScript Web, assuming that interaction with the server always happens by navigating to a new page.
++But their elements are part of the DOM like the rest of the page, and the DOM elements that represent form fields support a number of properties and events that are not present on other elements. These make it possible to inspect and control such input fields with JavaScript programs and do things such as adding new functionality to a form or using forms and fields as building blocks in a JavaScript application.
+ 
+-But their elements are part of the DOM like the rest of the page, and the DOM elements that represent form fields support a number of properties and events that are not present on other elements. These make it possible to inspect and control such input fields with JavaScript programs and do things such as adding functionality to a traditional form or using forms and fields as building blocks in a JavaScript application.
+-
+-## Fields
+-
+-A web form consists of any number of input fields grouped in a `&lt;form&gt;` tag. HTML allows a number of different styles of fields, ranging from simple on/off checkboxes to drop-down menus and fields for text input. This book won't try to comprehensively discuss all field types, but we will start with a rough overview.
++A web form consists of any number of input fields grouped in a `&lt;form&gt;` tag. HTML allows several different styles of fields, ranging from simple on/off checkboxes to drop-down menus and fields for text input. This book won't try to comprehensively discuss all field types, but we'll start with a rough overview.
+ 
+ A lot of field types use the `&lt;input&gt;` tag. This tag's `type` attribute is used to select the field's style. These are some commonly used `&lt;input&gt;` types:
+ 
+@@ -23,7 +14,7 @@ A lot of field types use the `&lt;input&gt;` tag. This tag's `type` attribute is
+ | `radio` | (Part of) a multiple-choice field |
+ | `file` | Allows the user to choose a file from their computer |
+ 
+-Form fields do not necessarily have to appear in a `&lt;form&gt;` tag. You can put them anywhere in a page. Such fields cannot be submitted (only a form as a whole can), but when responding to input with JavaScript, we often do not want to submit our fields normally anyway.
++Form fields do not necessarily have to appear in a `&lt;form&gt;` tag. You can put them anywhere in a page. Such form-less fields cannot be submitted (only a form as a whole can), but when responding to input with JavaScript, we often don't want to submit our fields normally anyway.
+ 
+ ```
+ <p><input type="text" value="abc"> (text)</p>
+@@ -35,9 +26,9 @@ Form fields do not necessarily have to appear in a `&lt;form&gt;` tag. You can p
+ <p><input type="file"> (file)</p>
+ ```
+ 
+-The JavaScript interface for such elements differs with the type of the element. We'll go over each of them later in the chapter.
++The JavaScript interface for such elements differs with the type of the element.
+ 
+-Multiline text fields have their own tag, `&lt;textarea&gt;`, mostly because using an attribute to specify a multiline starting value would be awkward. The `&lt;textarea&gt;` requires a matching `&lt;/textarea&gt;` closing tag and uses the text between those two, instead of using its `value` attribute, as starting text.
++Multiline text fields have their own tag, `&lt;textarea&gt;`, mostly because using an attribute to specify a multiline starting value would be awkward. The `&lt;textarea&gt;` tag requires a matching `&lt;/&lt;wbr&gt;textarea&gt;` closing tag and uses the text between those two, instead of the `value` attribute, as starting text.
+ 
+ ```
+ <textarea>
+@@ -57,15 +48,15 @@ Finally, the `&lt;select&gt;` tag is used to create a field that allows the user
+ </select>
+ ```
+ 
+-Whenever the value of a form field changes, it fires a `"change"` event.
++Whenever the value of a form field changes, it will fire a `"change"` event.
+ 
+ ## Focus
+ 
+-Unlike most elements in an HTML document, form fields can get _keyboard focus_. When clicked—or activated in some other way—they become the currently active element, the main recipient of keyboard input.
++Unlike most elements in HTML documents, form fields can get _keyboard focus_. When clicked or activated in some other way they become the currently active element and the recipient of keyboard input.
+ 
+-If a document has a text field, text typed will end up in there only when the field is focused. Other fields respond differently to keyboard events. For example, a `&lt;select&gt;` menu tries to move to the option that contains the text the user typed and responds to the arrow keys by moving its selection up and down.
++Thus you can only type into a text field when it is focused. Other fields respond differently to keyboard events. For example, a `&lt;select&gt;` menu tries to move to the option that contains the text the user typed and responds to the arrow keys by moving its selection up and down.
+ 
+-We can control focus from JavaScript with the `focus` and `blur` methods. The first moves focus to the DOM element it is called on, and the second removes focus. The value in `document.activeElement` corresponds to the currently focused element.
++We can control focus from JavaScript with the `focus` and `blur` methods. The first moves focus to the DOM element it is called on, and the second removes focus. The value in `document.&lt;wbr&gt;activeElement` corresponds to the currently focused element.
+ 
+ ```
+ <input type="text">
+@@ -79,11 +70,7 @@ We can control focus from JavaScript with the `focus` and `blur` methods. The fi
+ </script>
+ ```
+ 
+-For some pages, the user is expected to want to interact with a form field immediately. JavaScript can be used to focus this field when the document is loaded, but HTML also provides the `autofocus` attribute, which produces the same effect but lets the browser know what we are trying to achieve. This makes it possible for the browser to disable the behavior when it is not appropriate, such as when the user has focused something else.
+-
+-```
+-<input type="text" autofocus>
+-```
++For some pages, the user is expected to want to interact with a form field immediately. JavaScript can be used to focus this field when the document is loaded, but HTML also provides the `autofocus` attribute, which produces the same effect while letting the browser know what we are trying to achieve. This gives the browser the option to disable the behavior when it is not appropriate, such as when the user has focused something else.
+ 
+ Browsers traditionally also allow the user to move the focus through the document by pressing the Tab key. We can influence the order in which elements receive focus with the `tabindex` attribute. The following example document will let focus jump from the text input to the OK button, rather than going through the help link first:
+ 
+@@ -92,24 +79,24 @@ Browsers traditionally also allow the user to move the focus through the documen
+ <button onclick="console.log('ok')" tabindex=2>OK</button>
+ ```
+ 
+-By default, most types of HTML elements cannot be focused. But you can add a `tabindex` attribute to any element, which will make it focusable.
++By default, most types of HTML elements cannot be focused. But you can add a `tabindex` attribute to any element, which will make it focusable. A `tabindex` of -1 makes tabbing skip over an element, even if it is normally focusable.
+ 
+ ## Disabled fields
+ 
+-All form fields can be _disabled_ through their `disabled` attribute, which also exists as a property on the element's DOM object.
++All form fields can be _disabled_ through their `disabled` attribute. It is an attribute that can be specified without value—the fact that it is present at all disables the element.
+ 
+ ```
+ <button>I'm all right</button>
+ <button disabled>I'm out</button>
+ ```
+ 
+-Disabled fields cannot be focused or changed, and unlike active fields, they usually look gray and faded.
++Disabled fields cannot be focused or changed, and browsers make them look gray and faded.
+ 
+ When a program is in the process of handling an action caused by some button or other control, which might require communication with the server and thus take a while, it can be a good idea to disable the control until the action finishes. That way, when the user gets impatient and clicks it again, they don't accidentally repeat their action.
+ 
+ ## The form as a whole
+ 
+-When a field is contained in a `&lt;form&gt;` element, its DOM element will have a property `form` linking back to the form's DOM element. The `&lt;form&gt;` element, in turn, has a property called `elements` that contains an array-like collection of the fields inside it.
++When a field is contained in a `&lt;form&gt;` element, its DOM element will have a `form` property linking back to the form's DOM element. The `&lt;form&gt;` element, in turn, has a property called `elements` that contains an array-like collection of the fields inside it.
+ 
+ The `name` attribute of a form field determines the way its value will be identified when the form is submitted. It can also be used as a property name when accessing the form's `elements` property, which acts both as an array-like object (accessible by number) and a map (accessible by name).
+ 
+@@ -120,7 +107,7 @@ The `name` attribute of a form field determines the way its value will be identi
+   <button type="submit">Log in</button>
+ </form>
+ <script>
+-  var form = document.querySelector("form");
++  let form = document.querySelector("form");
+   console.log(form.elements[1].type);
+   // → password
+   console.log(form.elements.password.type);
+@@ -140,29 +127,29 @@ Submitting a form normally means that the browser navigates to the page indicate
+   <button type="submit">Save</button>
+ </form>
+ <script>
+-  var form = document.querySelector("form");
+-  form.addEventListener("submit", function(event) {
++  let form = document.querySelector("form");
++  form.addEventListener("submit", event => {
+     console.log("Saving value", form.elements.value.value);
+     event.preventDefault();
+   });
+ </script>
+ ```
+ 
+-Intercepting `"submit"` events in JavaScript has various uses. We can write code to verify that the values the user entered make sense and immediately show an error message instead of submitting the form when they don't. Or we can disable the regular way of submitting the form entirely, as in the previous example, and have our program handle the input, possibly using `XMLHttpRequest` to send it over to a server without reloading the page.
++Intercepting `"submit"` events in JavaScript has various uses. We can write code to verify that the values the user entered make sense and immediately show an error message instead of submitting the form. Or we can disable the regular way of submitting the form entirely, as in the example, and have our program handle the input, possibly using `fetch` to send it to a server without reloading the page.
+ 
+ ## Text fields
+ 
+-Fields created by `&lt;input&gt;` tags with a type of `text` or `password`, as well as `textarea` tags, share a common interface. Their DOM elements have a `value` property that holds their current content as a string value. Setting this property to another string changes the field's content.
++Fields created by `&lt;input&gt;` tags with a type of `text` or `password`, as well as `&lt;textarea&gt;` tags, share a common interface. Their DOM elements have a `value` property that holds their current content as a string value. Setting this property to another string changes the field's content.
+ 
+ The `selectionStart` and `selectionEnd` properties of text fields give us information about the cursor and selection in the text. When nothing is selected, these two properties hold the same number, indicating the position of the cursor. For example, 0 indicates the start of the text, and 10 indicates the cursor is after the 10&lt;sup&gt;th&lt;/sup&gt; character. When part of the field is selected, the two properties will differ, giving us the start and end of the selected text. Like `value`, these properties may also be written to.
+ 
+-As an example, imagine you are writing an article about Khasekhemwy but have some trouble spelling his name. The following code wires up a `&lt;textarea&gt;` tag with an event handler that, when you press F2, inserts the string “Khasekhemwy” for you.
++Imagine you are writing an article about Khasekhemwy but have some trouble spelling his name. The following code wires up a `&lt;textarea&gt;` tag with an event handler that, when you press F2, inserts the string “Khasekhemwy” for you.
+ 
+ ```
+ <textarea></textarea>
+ <script>
+-  var textarea = document.querySelector("textarea");
+-  textarea.addEventListener("keydown", function(event) {
++  let textarea = document.querySelector("textarea");
++  textarea.addEventListener("keydown", event => {
+     // The key code for F2 happens to be 113
+     if (event.keyCode == 113) {
+       replaceSelection(textarea, "Khasekhemwy");
+@@ -170,12 +157,12 @@ As an example, imagine you are writing an article about Khasekhemwy but have som
+     }
+   });
+   function replaceSelection(field, word) {
+-    var from = field.selectionStart, to = field.selectionEnd;
++    let from = field.selectionStart, to = field.selectionEnd;
+     field.value = field.value.slice(0, from) + word +
+                   field.value.slice(to);
+     // Put the cursor after the word
+-    field.selectionStart = field.selectionEnd =
+-      from + word.length;
++    field.selectionStart = from + word.length;
++    field.selectionEnd = from + word.length;
+   }
+ </script>
+ ```
+@@ -184,14 +171,14 @@ The `replaceSelection` function replaces the currently selected part of a text f
+ 
+ The `"change"` event for a text field does not fire every time something is typed. Rather, it fires when the field loses focus after its content was changed. To respond immediately to changes in a text field, you should register a handler for the `"input"` event instead, which fires for every time the user types a character, deletes text, or otherwise manipulates the field's content.
+ 
+-The following example shows a text field and a counter showing the current length of the text entered:
++The following example shows a text field and a counter showing the current length of the text in the field:
+ 
+ ```
+ <input type="text"> length: <span id="length">0</span>
+ <script>
+-  var text = document.querySelector("input");
+-  var output = document.querySelector("#length");
+-  text.addEventListener("input", function() {
++  let text = document.querySelector("input");
++  let output = document.querySelector("#length");
++  text.addEventListener("input", () => {
+     output.textContent = text.value.length;
+   });
+ </script>
+@@ -199,64 +186,59 @@ The following example shows a text field and a counter showing the current lengt
+ 
+ ## Checkboxes and radio buttons
+ 
+-A checkbox field is a simple binary toggle. Its value can be extracted or changed through its `checked` property, which holds a Boolean value.
++A checkbox field is a binary toggle. Its value can be extracted or changed through its `checked` property, which holds a Boolean value.
+ 
+ ```
+-<input type="checkbox" id="purple">
+-<label for="purple">Make this page purple</label>
++<label>
++  <input type="checkbox" id="purple"> Make this page purple
++</label>
+ <script>
+-  var checkbox = document.querySelector("#purple");
+-  checkbox.addEventListener("change", function() {
++  let checkbox = document.querySelector("#purple");
++  checkbox.addEventListener("change", () => {
+     document.body.style.background =
+       checkbox.checked ? "mediumpurple" : "";
+   });
+ </script>
+ ```
+ 
+-The `&lt;label&gt;` tag is used to associate a piece of text with an input field. Its `for` attribute should refer to the `id` of the field. Clicking the label will activate the field, which focuses it and toggles its value when it is a checkbox or radio button.
++The `&lt;label&gt;` tag associates a piece of document with an input field. Clicking anywhere on the label will activate the field, which focuses it and toggles its value when it is a checkbox or radio button.
+ 
+ A radio button is similar to a checkbox, but it's implicitly linked to other radio buttons with the same `name` attribute so that only one of them can be active at any time.
+ 
+ ```
+ Color:
+-<input type="radio" name="color" value="mediumpurple"> Purple
+-<input type="radio" name="color" value="lightgreen"> Green
+-<input type="radio" name="color" value="lightblue"> Blue
++<label>
++  <input type="radio" name="color" value="orange"> Orange
++</label>
++<label>
++  <input type="radio" name="color" value="lightgreen"> Green
++</label>
++<label>
++  <input type="radio" name="color" value="lightblue"> Blue
++</label>
+ <script>
+-  var buttons = document.getElementsByName("color");
+-  function setColor(event) {
+-    document.body.style.background = event.target.value;
++  let buttons = document.querySelectorAll("[name=color]");
++  for (let button of Array.from(buttons)) {
++    button.addEventListener("change", () => {
++      document.body.style.background = button.value;
++    });
+   }
+-  for (var i = 0; i < buttons.length; i++)
+-    buttons[i].addEventListener("change", setColor);
+ </script>
+ ```
+ 
+-The `document.getElementsByName` method gives us all elements with a given `name` attribute. The example loops over those (with a regular `for` loop, not `forEach`, because the returned collection is not a real array) and registers an event handler for each element. Remember that event objects have a `target` property referring to the element that triggered the event. This is often useful in event handlers like this one, which will be called on different elements and need some way to access the current target.
++The square brackets in the CSS query given to `querySelectorAll` are used to match attributes. It selects elements whose `name` attribute is `"color"`.
+ 
+ ## Select fields
+ 
+ Select fields are conceptually similar to radio buttons—they also allow the user to choose from a set of options. But where a radio button puts the layout of the options under our control, the appearance of a `&lt;select&gt;` tag is determined by the browser.
+ 
+-Select fields also have a variant that is more akin to a list of checkboxes, rather than radio boxes. When given the `multiple` attribute, a `&lt;select&gt;` tag will allow the user to select any number of options, rather than just a single option.
+-
+-```
+-<select multiple>
+-  <option>Pancakes</option>
+-  <option>Pudding</option>
+-  <option>Ice cream</option>
+-</select>
+-```
+-
+-This will, in most browsers, show up differently than a non-`multiple` select field, which is commonly drawn as a _drop-down_ control that shows the options only when you open it.
++Select fields also have a variant that is more akin to a list of checkboxes, rather than radio boxes. When given the `multiple` attribute, a `&lt;select&gt;` tag will allow the user to select any number of options, rather than just a single option. This will, in most browsers, show up differently than a normal select field, which is typically drawn as a _drop-down_ control that shows the options only when you open it.
+ 
+-The `size` attribute to the `&lt;select&gt;` tag is used to set the number of options that are visible at the same time, which gives you explicit control over the drop-down's appearance. For example, setting the `size` attribute to `"3"` will make the field show three lines, whether it has the `multiple` option enabled or not.
+-
+-Each `&lt;option&gt;` tag has a value. This value can be defined with a `value` attribute, but when that is not given, the text inside the option will count as the option's value. The `value` property of a `&lt;select&gt;` element reflects the currently selected option. For a `multiple` field, though, this property doesn't mean much since it will give the value of only _one_ of the currently selected options.
++Each `&lt;option&gt;` tag has a value. This value can be defined with a `value` attribute. When that is not given, the text inside the option will count as its value. The `value` property of a `&lt;select&gt;` element reflects the currently selected option. For a `multiple` field, though, this property doesn't mean much since it will give the value of only _one_ of the currently selected options.
+ 
+ The `&lt;option&gt;` tags for a `&lt;select&gt;` field can be accessed as an array-like object through the field's `options` property. Each option has a property called `selected`, which indicates whether that option is currently selected. The property can also be written to select or deselect an option.
+ 
+-The following example extracts the selected values from a `multiple` select field and uses them to compose a binary number from individual bits. Hold Ctrl (or Command on a Mac) to select multiple options.
++This example extracts the selected values from a `multiple` select field and uses them to compose a binary number from individual bits. Hold Ctrl (or Command on a Mac) to select multiple options.
+ 
+ ```
+ <select multiple>
+@@ -266,14 +248,14 @@ The following example extracts the selected values from a `multiple` select fiel
+   <option value="8">1000</option>
+ </select> = <span id="output">0</span>
+ <script>
+-  var select = document.querySelector("select");
+-  var output = document.querySelector("#output");
+-  select.addEventListener("change", function() {
+-    var number = 0;
+-    for (var i = 0; i < select.options.length; i++) {
+-      var option = select.options[i];
+-      if (option.selected)
++  let select = document.querySelector("select");
++  let output = document.querySelector("#output");
++  select.addEventListener("change", () => {
++    let number = 0;
++    for (let option of Array.from(select.options)) {
++      if (option.selected) {
+         number += Number(option.value);
++      }
+     }
+     output.textContent = number;
+   });
+@@ -289,13 +271,12 @@ A file field usually looks like a button labeled with something like “choose f
+ ```
+ <input type="file">
+ <script>
+-  var input = document.querySelector("input");
+-  input.addEventListener("change", function() {
++  let input = document.querySelector("input");
++  input.addEventListener("change", () => {
+     if (input.files.length > 0) {
+-      var file = input.files[0];
++      let file = input.files[0];
+       console.log("You chose", file.name);
+-      if (file.type)
+-        console.log("It has type", file.type);
++      if (file.type) console.log("It has type", file.type);
+     }
+   });
+ </script>
+@@ -303,57 +284,51 @@ A file field usually looks like a button labeled with something like “choose f
+ 
+ The `files` property of a file field element is an array-like object (again, not a real array) containing the files chosen in the field. It is initially empty. The reason there isn't simply a `file` property is that file fields also support a `multiple` attribute, which makes it possible to select multiple files at the same time.
+ 
+-Objects in the `files` property have properties such as `name` (the filename), `size` (the file's size in bytes), and `type` (the media type of the file, such as `text/plain` or `image/jpeg`).
++Objects in the `files` object have properties such as `name` (the filename), `size` (the file's size in bytes, which are chunks of 8 bits), and `type` (the media type of the file, such as `text/plain` or `image/jpeg`).
+ 
+-What it does not have is a property that contains the content of the file. Getting at that is a little more involved. Since reading a file from disk can take time, the interface will have to be asynchronous to avoid freezing the document. You can think of the `FileReader` constructor as being similar to `XMLHttpRequest` but for files.
++What it does not have is a property that contains the content of the file. Getting at that is a little more involved. Since reading a file from disk can take time, the interface must be asynchronous to avoid freezing the document.
+ 
+ ```
+ <input type="file" multiple>
+ <script>
+-  var input = document.querySelector("input");
+-  input.addEventListener("change", function() {
+-    Array.prototype.forEach.call(input.files, function(file) {
+-      var reader = new FileReader();
+-      reader.addEventListener("load", function() {
++  let input = document.querySelector("input");
++  input.addEventListener("change", () => {
++    for (let file of Array.from(input.files)) {
++      let reader = new FileReader();
++      reader.addEventListener("load", () => {
+         console.log("File", file.name, "starts with",
+                     reader.result.slice(0, 20));
+       });
+       reader.readAsText(file);
+-    });
++    }
+   });
+ </script>
+ ```
+ 
+ Reading a file is done by creating a `FileReader` object, registering a `"load"` event handler for it, and calling its `readAsText` method, giving it the file we want to read. Once loading finishes, the reader's `result` property contains the file's content.
+ 
+-The example uses `Array.prototype.forEach` to iterate over the array since in a normal loop it would be awkward to get the correct `file` and `reader` objects from the event handler. The variables would be shared by all iterations of the loop.
+-
+-`FileReader`s also fire an `"error"` event when reading the file fails for any reason. The error object itself will end up in the reader's `error` property. If you don't want to remember the details of yet another inconsistent asynchronous interface, you could wrap it in a `Promise` (see [Chapter 17](17_http.html#promises)) like this:
++`FileReader`s also fire an `"error"` event when reading the file fails for any reason. The error object itself will end up in the reader's `error` property. This interface was designed before promises became part of the language. You could wrap it in a promise like this:
+ 
+ ```
+-function readFile(file) {
+-  return new Promise(function(succeed, fail) {
+-    var reader = new FileReader();
+-    reader.addEventListener("load", function() {
+-      succeed(reader.result);
+-    });
+-    reader.addEventListener("error", function() {
+-      fail(reader.error);
+-    });
++function readFileText(file) {
++  return new Promise((resolve, reject) => {
++    let reader = new FileReader();
++    reader.addEventListener(
++      "load", () => resolve(reader.result));
++    reader.addEventListener(
++      "error", () => reject(reader.error));
+     reader.readAsText(file);
+   });
+ }
+ ```
+ 
+-It is possible to read only part of a file by calling `slice` on it and passing the result (a so-called _blob_ object) to the file reader.
+-
+ ## Storing data client-side
+ 
+-Simple HTML pages with a bit of JavaScript can be a great medium for “mini applications”—small helper programs that automate everyday things. By connecting a few form fields with event handlers, you can do anything from converting between degrees Celsius and Fahrenheit to computing passwords from a master password and a website name.
++Simple HTML pages with a bit of JavaScript can be a great format for “mini applications”—small helper programs that automate basic tasks. By connecting a few form fields with event handlers, you can do anything from converting between centimeters and inches to computing passwords from a master password and a website name.
+ 
+-When such an application needs to remember something between sessions, you cannot use JavaScript variables since those are thrown away every time a page is closed. You could set up a server, connect it to the Internet, and have your application store something there. We will see how to do that in [Chapter 20](20_node.html#node). But this adds a lot of extra work and complexity. Sometimes it is enough to just keep the data in the browser. But how?
++When such an application needs to remember something between sessions, you cannot use JavaScript bindings—those are thrown away every time the page is closed. You could set up a server, connect it to the Internet, and have your application store something there. We will see how to do that in [Chapter 20](20_node.html). But that's a lot of extra work and complexity. Sometimes it is enough to just keep the data in the browser.
+ 
+-You can store string data in a way that survives page reloads by putting it in the `localStorage` object. This object allows you to file string values under names (also strings), as in this example:
++The `localStorage` object can be used to store data in a way that survives page reloads. This object allows you to file string values under names.
+ 
+ ```
+ localStorage.setItem("username", "marijn");
+@@ -366,75 +341,85 @@ A value in `localStorage` sticks around until it is overwritten, it is removed w
+ 
+ Sites from different domains get different storage compartments. That means data stored in `localStorage` by a given website can, in principle, only be read (and overwritten) by scripts on that same site.
+ 
+-Browsers also enforce a limit on the size of the data a site can store in `localStorage`, typically on the order of a few megabytes. That restriction, along with the fact that filling up people's hard drives with junk is not really profitable, prevents this feature from eating up too much space.
++Browsers do enforce a limit on the size of the data a site can store in `localStorage`. That restriction, along with the fact that filling up people's hard drives with junk is not really profitable, prevents the feature from eating up too much space.
+ 
+-The following code implements a simple note-taking application. It keeps the user's notes as an object, associating note titles with content strings. This object is encoded as JSON and stored in `localStorage`. The user can select a note from a `&lt;select&gt;` field and change that note's text in a `&lt;textarea&gt;`. A note can be added by clicking a button.
++The following code implements a crude note-taking application. It keeps a set of named notes, and allows the user to edit notes and create new ones.
+ 
+ ```
+-Notes: <select id="list"></select>
+-<button onclick="addNote()">new</button><br>
+-<textarea id="currentnote" style="width: 100%; height: 10em">
+-</textarea>
++Notes: <select></select> <button>Add</button><br>
++<textarea style="width: 100%"></textarea>
+ 
+ <script>
+-  var list = document.querySelector("#list");
+-  function addToList(name) {
+-    var option = document.createElement("option");
+-    option.textContent = name;
+-    list.appendChild(option);
+-  }
+-
+-  // Initialize the list from localStorage
+-  var notes = JSON.parse(localStorage.getItem("notes")) ||
+-              {"shopping list": ""};
+-  for (var name in notes)
+-    if (notes.hasOwnProperty(name))
+-      addToList(name);
++  let list = document.querySelector("select");
++  let note = document.querySelector("textarea");
++
++  let state;
++  function setState(newState) {
++    list.textContent = "";
++    for (let name of Object.keys(newState.notes)) {
++      let option = document.createElement("option");
++      option.textContent = name;
++      if (newState.selected == name) option.selected = true;
++      list.appendChild(option);
++    }
++    note.value = newState.notes[newState.selected];
+ 
+-  function saveToStorage() {
+-    localStorage.setItem("notes", JSON.stringify(notes));
++    localStorage.setItem("Notes", JSON.stringify(newState));
++    state = newState;
+   }
++  setState(JSON.parse(localStorage.getItem("Notes")) || {
++    notes: {"shopping list": "Carrots\nRaisins"},
++    selected: "shopping list"
++  });
+ 
+-  var current = document.querySelector("#currentnote");
+-  current.value = notes[list.value];
+-
+-  list.addEventListener("change", function() {
+-    current.value = notes[list.value];
++  list.addEventListener("change", () => {
++    setState({notes: state.notes, selected: list.value});
+   });
+-  current.addEventListener("change", function() {
+-    notes[list.value] = current.value;
+-    saveToStorage();
++  note.addEventListener("change", () => {
++    setState({
++      notes: Object.assign({}, state.notes,
++                           {[state.selected]: note.value}),
++      selected: state.selected
++    });
+   });
+-
+-  function addNote() {
+-    var name = prompt("Note name", "");
+-    if (!name) return;
+-    if (!notes.hasOwnProperty(name)) {
+-      notes[name] = "";
+-      addToList(name);
+-      saveToStorage();
+-    }
+-    list.value = name;
+-    current.value = notes[name];
+-  }
++  document.querySelector("button")
++    .addEventListener("click", () => {
++      let name = prompt("Note name");
++      if (name) setState({
++        notes: Object.assign({}, state.notes, {[name]: ""}),
++        selected: name
++      });
++    });
+ </script>
+ ```
+ 
+-The script initializes the `notes` variable to the value stored in `localStorage` or, if that is missing, to a simple object with only an empty `"shopping list"` note in it. Reading a field that does not exist from `localStorage` will yield `null`. Passing `null` to `JSON.parse` will make it parse the string `"null"` and return `null`. Thus, the `||` operator can be used to provide a default value in a situation like this.
++The script gets its starting state from the `"Notes"` value stored in `localStorage` or, if that is missing, it creates an example state that only has a shopping list in it. Reading a field that does not exist from `localStorage` will yield `null`. Passing `null` to `JSON.parse` will make it parse the string `"null"` and return `null`. Thus, the `||` operator can be used to provide a default value in a situation like this.
+ 
+-Whenever the note data changes (when a new note is added or an existing note changed), the `saveToStorage` function is called to update the storage field. If this application was intended to handle thousands of notes, rather than a handful, this would be too expensive, and we'd have to come up with a more complicated way to store them, such as giving each note its own storage field.
++The `setState` method makes sure the DOM is showing a given state, and stores the new state to `localStorage`. Event handlers call this function to move to a new state.
+ 
+-When the user adds a new note, the code must update the text field explicitly, even though the `&lt;select&gt;` field has a `"change"` handler that does the same thing. This is necessary because `"change"` events fire only when the _user_ changes the field's value, not when a script does it.
++The use of `Object.assign` in the example is intended to create a new object that is a clone of the old `state.notes`, but with one property added or overwritten. `Object.assign` takes its first argument, and adds all properties from any further arguments to it. Thus, giving it an empty object will cause it to fill a fresh object. The square brackets notation in the third argument is used to create a property whose names is based on some dynamic value.
+ 
+-There is another object similar to `localStorage` called `sessionStorage`. The difference between the two is that the content of `sessionStorage` is forgotten at the end of each session, which for most browsers means whenever the browser is closed.
++There is another object, similar to `localStorage`, called `sessionStorage`. The difference between the two is that the content of `sessionStorage` is forgotten at the end of each _session_, which for most browsers means whenever the browser is closed.
+ 
+ ## Summary
+ 
++In this chapter, we discussed how the HTTP protocol works. A _client_ sends a request, which contains a method (usually `GET`) and a path that identifies a resource. The _server_ then decides what to do with the request and responds with a status code and a response body. Both requests and responses may contain headers that provide additional information.
++
++The interface through which browser JavaScript can make HTTP requests is called `fetch`. Making a request looks like this:
++
++```
++fetch("/18_http.html").then(r => r.text()).then(text => {
++  console.log(`The page starts with ${text.slice(0, 15)}`);
++});
++```
++
++Browsers make `GET` requests to fetch the resources needed to display a web page. A page may also contain forms, which allow information entered by the user to be sent as a request for a new page when the form is submitted.
++
+ HTML can express various types of form fields, such as text fields, checkboxes, multiple-choice fields, and file pickers.
+ 
+-Such fields can be inspected and manipulated with JavaScript. They fire the `"change"` event when changed, the `"input"` event when text is typed, and various keyboard events. These events allow us to notice when the user is interacting with the fields. Properties like `value` (for text and select fields) or `checked` (for checkboxes and radio buttons) are used to read or set the field's content.
++Such fields can be inspected and manipulated with JavaScript. They fire the `"change"` event when changed, the `"input"` event when text is typed, and receive keyboard events when they have keyboard focus. Properties like `value` (for text and select fields) or `checked` (for checkboxes and radio buttons) are used to read or set the field's content.
+ 
+-When a form is submitted, its `"submit"` event fires. A JavaScript handler can call `preventDefault` on that event to prevent the submission from happening. Form field elements do not have to be wrapped in `&lt;form&gt;` tags.
++When a form is submitted, a `"submit"` event is fired on it. A JavaScript handler can call `preventDefault` on that event to prevent the submission from happening. Form field elements may also occur outside of a form tag.
+ 
+ When the user has selected a file from their local file system in a file picker field, the `FileReader` interface can be used to access the content of this file from a JavaScript program.
+ 
+@@ -442,54 +427,45 @@ The `localStorage` and `sessionStorage` objects can be used to save information
+ 
+ ## Exercises
+ 
+-### A JavaScript workbench
++### Content negotiation
+ 
+-Build an interface that allows people to type and run pieces of JavaScript code.
++One of the things that HTTP can do is called _content negotiation_. The `Accept` request header is used to tell the server what type of document the client would like to get. Many servers ignore this header, but when a server knows of various ways to encode a resource, it can look at this header and send the one that the client prefers.
+ 
+-Put a button next to a `&lt;textarea&gt;` field, which, when pressed, uses the `Function` constructor we saw in [Chapter 10](10_modules.html#eval) to wrap the text in a function and call it. Convert the return value of the function, or any error it raised, to a string and display it after the text field.
++The URL [_eloquentjavascript.net/author_](https://eloquentjavascript.net/author) is configured to respond with either plaintext, HTML, or JSON, depending on what the client asks for. These formats are identified by the standardized _media types_ `text/plain`, `text/html`, and `application/json`.
+ 
+-```
+-<textarea id="code">return "hi";</textarea>
+-<button id="button">Run</button>
+-<pre id="output"></pre>
++Send requests to fetch all three formats of this resource. Use the `headers` property in the options object passed to `fetch` to set the header named `Accept` to the desired media type.
+ 
+-<script>
+-  // Your code here.
+-</script>
++Finally, try asking for the media type `application/&lt;wbr&gt;rainbows+unicorns` and see which status code that produces.
++
++```
++// Your code here.
+ ```
+ 
+-Use `document.querySelector` or `document.getElementById` to get access to the elements defined in your HTML. An event handler for `"click"` or `"mousedown"` events on the button can get the `value` property of the text field and call `new Function` on it.
++Base your code on the `fetch` examples [earlier in the chapter](18_http.html#fetch).
+ 
+-Make sure you wrap both the call to `new Function` and the call to its result in a `try` block so that you can catch exceptions that it produces. In this case, we really don't know what type of exception we are looking for, so catch everything.
++Asking for a bogus media type will return a response with code 406, “Not acceptable”, which is the code a server should return when it can't fulfill the `Accept` header.
+ 
+-The `textContent` property of the output element can be used to fill it with a string message. Or, if you want to keep the old content around, create a new text node using `document.createTextNode` and append it to the element. Remember to add a newline character to the end so that not all output appears on a single line.
++### A JavaScript workbench
+ 
+-### Autocompletion
++Build an interface that allows people to type and run pieces of JavaScript code.
+ 
+-Extend a text field so that when the user types, a list of suggested values is shown below the field. You have an array of possible values available and should show those that start with the text that was typed. When a suggestion is clicked, replace the text field's current value with it.
++Put a button next to a `&lt;textarea&gt;` field, which, when pressed, uses the `Function` constructor we saw in [Chapter 10](10_modules.html#eval) to wrap the text in a function and call it. Convert the return value of the function, or any error it raises, to a string and display it below the text field.
+ 
+ ```
+-<input type="text" id="field">
+-<div id="suggestions" style="cursor: pointer"></div>
++<textarea id="code">return "hi";</textarea>
++<button id="button">Run</button>
++<pre id="output"></pre>
+ 
+ <script>
+-  // Builds up an array with global variable names, like
+-  // 'alert', 'document', and 'scrollTo'
+-  var terms = [];
+-  for (var name in window)
+-    terms.push(name);
+-
+   // Your code here.
+ </script>
+ ```
+ 
+-The best event for updating the suggestion list is `"input"` since that will fire immediately when the content of the field is changed.
+-
+-Then loop over the array of terms and see whether they start with the given string. For example, you could call `indexOf` and see whether the result is zero. For each matching string, add an element to the suggestions `&lt;div&gt;`. You should probably also empty that each time you start updating the suggestions, for example by setting its `textContent` to the empty string.
++Use `document.&lt;wbr&gt;querySelector` or `document.&lt;wbr&gt;getElementById` to get access to the elements defined in your HTML. An event handler for `"click"` or `"mousedown"` events on the button can get the `value` property of the text field and call `Function` on it.
+ 
+-You could either add a `"click"` event handler to every suggestion element or add a single one to the outer `&lt;div&gt;` that holds them and look at the `target` property of the event to find out which suggestion was clicked.
++Make sure you wrap both the call to `Function` and the call to its result in a `try` block so that you can catch exceptions that it produces. In this case, we really don't know what type of exception we are looking for, so catch everything.
+ 
+-To get the suggestion text out of a DOM node, you could look at its `textContent` or set an attribute to explicitly store the text when you create the element.
++The `textContent` property of the output element can be used to fill it with a string message. Or, if you want to keep the old content around, create a new text node using `document.&lt;wbr&gt;createTextNode` and append it to the element. Remember to add a newline character to the end so that not all output appears on a single line.
+ 
+ ### Conway's Game of Life
+ 
+@@ -518,10 +494,10 @@ Implement this game using whichever data structure you find appropriate. Use `Ma
+ 
+ To solve the problem of having the changes conceptually happen at the same time, try to see the computation of a generation as a pure function, which takes one grid and produces a new grid that represents the next turn.
+ 
+-Representing the grid can be done in any of the ways shown in Chapters [7](07_elife.html#grid) and [15](15_game.html#level). Counting live neighbors can be done with two nested loops, looping over adjacent coordinates. Take care not to count cells outside of the field and to ignore the cell in the center, whose neighbors we are counting.
++Representing the matrix can be done in the way shown in [Chapter 6](06_object.html#matrix). You can count live neighbors with two nested loops, looping over adjacent coordinates in both dimensions. Take care not to count cells outside of the field and to ignore the cell in the center, whose neighbors we are counting.
+ 
+ Making changes to checkboxes take effect on the next generation can be done in two ways. An event handler could notice these changes and update the current grid to reflect them, or you could generate a fresh grid from the values in the checkboxes before computing the next turn.
+ 
+ If you choose to go with event handlers, you might want to attach attributes that identify the position that each checkbox corresponds to so that it is easy to find out which cell to change.
+ 
+-To draw the grid of checkboxes, you either can use a `&lt;table&gt;` element (see [Chapter 13](13_dom.html#exercise_table)) or simply put them all in the same element and put `&lt;br&gt;` (line break) elements between the rows.
++To draw the grid of checkboxes, you can either use a `&lt;table&gt;` element (see [Chapter 14](14_dom.html#exercise_table)) or simply put them all in the same element and put `&lt;br&gt;` (line break) elements between the rows.
